@@ -18,7 +18,7 @@ void *_realloc(void *ptr, size_t olds, size_t news)
 		ptr = malloc(news);
 		return (ptr);
 	}
-	if (olds == 0)
+	if (news == 0)
 	{
 		free(ptr);
 		return (NULL);
@@ -44,25 +44,46 @@ ssize_t _getline(char **buf, size_t *size, FILE *fp)
 {
 	int fd = fileno(fp);
 	size_t count = 0;
-	ssize_t bytesread = 0;
-	char *str = malloc(1), c;
+	int bytesread;
+	char *str, c;
 
 	if (!fp)
 		return (-1);
-	while (bytesread += read(fd, &c, 1) > 0)
+	str = malloc(1);
+	if (!str)
+		return (-1);
+	bytesread = read(1, &c, 1);
+	while (bytesread > 0)
 	{
+		if (c == '\n' && count == 0)
+		{
+			free(str);
+			str = NULL;
+			break;
+		}
+		if (c == '\n')
+			break;
 		count++;
 		str[count - 1] = c;
 		str = _realloc(str, count, count + 1);
 		str[count] = '\0';
-		if (c == '\n')
-			break;
+		bytesread = read(1, &c, 1);
+	}
+	if (bytesread == 0 && count == 0)
+	{
+		free(str);
+		printf("%d\n", bytesread);
+		return (-1);
 	}
 	if (bytesread == -1)
+	{
+		free(str);
+		printf("%d\n", bytesread);
 		return (-1);
+	}
 	if (*buf != NULL)
 		free(*buf);
 	*buf = str;
 	*size = count;
-	return (bytesread);
+	return ((ssize_t)(++count));
 }

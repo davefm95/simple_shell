@@ -7,4 +7,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+void *_realloc(void *ptr, size_t olds, size_t news);
+ssize_t _getline(char **buf, size_t *size, FILE *fp);
 #endif

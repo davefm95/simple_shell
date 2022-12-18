@@ -1,3 +1,4 @@
+#include <errno.h>
 #include "main.h"
 /**
  *main - pilot function for shell program
@@ -9,38 +10,28 @@ int main(void)
 	pid_t childpid;
 	size_t size = 0;
 	char *buff = NULL;
-	char *argv[] = {"/bin/ls",NULL};
-	int hasargs = 0, i = 0;
+	char *argv[] = {NULL, NULL};
 
-	while (getline(&buff, &size, stdin) > 0)
+	while (_getline(&buff, &size, stdin) > 0)
 	{
-
-		while (buff[i] != '\0')
+		if (buff !=NULL)
 		{
-			if (buff[0] == ' ')
-				break;
-			if (buff[i] == ' ' && buff[i + 1] == '\0')
-				break;
-			if (buff[i] == ' ')
+			argv[0] = buff;
+			switch (childpid = fork())
 			{
-				hasargs++;
+			case -1:
+				perror("unable to fork");
+				break;
+			case 0:
+				if (execve(argv[0], argv, environ) == -1)
+					printf("%s", strerror(errno));
+				exit(0);
+				break;
+			default:
+				wait(NULL);
+				break;
 			}
-			i++;
-		}
-		printf("%s", buff);
-		switch (childpid = fork())
-		{
-		case -1:
-			perror("unable to fork");
-			break;
-		case 0:
-			if (execve(buff, argv, environ) == -1)
-				write(1, "command not found", 17);
-			exit(0);
-			break;
-		default:
-			wait(NULL);
-			break;
+			size = 0;
 		}
 	}
 	return (0);
