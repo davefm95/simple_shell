@@ -1,22 +1,28 @@
-#include <errno.h>
 #include "main.h"
 /**
  *main - pilot function for shell program
+ *@ac: number of args in list
+ *@ac: array of string args
  *Return: 0
  */
 extern char **environ;
-int main(void)
+int main(int ac, char **av)
 {
+	ssize_t bytesrd;
 	pid_t childpid;
 	size_t size = 0;
 	char *buff = NULL;
 	char *argv[] = {NULL, NULL};
+	(void)ac;
 
-	while (_getline(&buff, &size, stdin) > 0)
+	do
 	{
-		if (buff !=NULL)
+		write(1, "$ ", 2);
+		if ((bytesrd = getline(&buff, &size, stdin)) != -1)
 		{
-			argv[0] = buff;
+			if (strcmp(buff, "\n") == 0)
+				continue;
+			argv[0] = format_command(buff);
 			switch (childpid = fork())
 			{
 			case -1:
@@ -24,15 +30,20 @@ int main(void)
 				break;
 			case 0:
 				if (execve(argv[0], argv, environ) == -1)
-					printf("%s", strerror(errno));
+					err_msg(*av, argv[0]);
 				exit(0);
 				break;
 			default:
 				wait(NULL);
 				break;
 			}
-			size = 0;
+			free(argv[0]);
+			argv[0] = NULL;
+			free(buff);
+			buff = NULL;
 		}
-	}
+	}while (bytesrd != -1);
+	if (bytesrd == -1)
+		free(buff);
 	return (0);
 }
