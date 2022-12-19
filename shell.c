@@ -11,7 +11,7 @@ int main(int ac, char **av)
 	ssize_t bytesrd;
 	pid_t childpid;
 	size_t size = 0;
-	char *buff = NULL;
+	char *buff = NULL, **agv;
 	char *argv[] = {NULL, NULL};
 	(void)ac;
 
@@ -20,8 +20,11 @@ int main(int ac, char **av)
 		write(1, "$ ", 2);
 		if ((bytesrd = getline(&buff, &size, stdin)) != -1)
 		{
-			if (strcmp(buff, "\n") == 0)
+			if (strcmp(buff, "\n") == 0 || strcmp(buff, " \n") == 0)
 				continue;
+			str = format_command(buff);
+			if (hasargs(str) > 1)
+				split_string(str, hasargs(str))x;
 			argv[0] = format_command(buff);
 			switch (childpid = fork())
 			{
@@ -35,7 +38,6 @@ int main(int ac, char **av)
 				break;
 			default:
 				wait(NULL);
-				break;
 			}
 			free(argv[0]);
 			argv[0] = NULL;
