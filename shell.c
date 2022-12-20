@@ -8,7 +8,7 @@
  */
 int main(int ac, char **av, char **env)
 {
-	ssize_t bytesrd, i;
+	ssize_t bytesrd;
 	size_t size = 0, count = 0;
 	char *buff = NULL, **argv = NULL, *modarg = NULL;
 	(void)ac;
