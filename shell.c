@@ -9,8 +9,8 @@
 int main(int ac, char **av, char **env)
 {
 	ssize_t bytesrd, i;
-	size_t size = 0;
-	char *buff = NULL, **argv = NULL;
+	size_t size = 0, count = 0;
+	char *buff = NULL, **argv = NULL, *modarg = NULL;
 	(void)ac;
 
 	do
@@ -19,10 +19,22 @@ int main(int ac, char **av, char **env)
 		bytesrd = getline(&buff, &size, stdin);
 		if (bytesrd != -1)
 		{
+			count++;
 			argv = get_args(buff);
 			if (argv == NULL)
 				continue;
-			fork_exec(av, argv, env);
+			modarg = handlepath(argv[0]);
+			if (modarg == NULL)
+			{
+				err_msg(count, *av, argv[0]);
+				free_mem(buff, argv);
+				buff = NULL;
+				argv = NULL;
+				continue;
+			}
+			fork_exec(modarg, av, argv, env, count);
+			if (strcmp(modarg, argv[0]) != 0)
+				free(modarg);
 			free_mem(NULL, argv);
 			argv = NULL;
 			free(buff);
