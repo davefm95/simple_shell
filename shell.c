@@ -2,45 +2,29 @@
 /**
  *main - pilot function for shell program
  *@ac: number of args in list
- *@ac: array of string args
+ *@av: array of string args
+ *@env: environment vars
  *Return: 0
  */
-extern char **environ;
-int main(int ac, char **av)
+int main(int ac, char **av, char **env)
 {
-	ssize_t bytesrd;
-	pid_t childpid;
+	ssize_t bytesrd, i;
 	size_t size = 0;
-	char *buff = NULL, **agv;
-	char *argv[] = {NULL, NULL};
+	char *buff = NULL, **argv = NULL;
 	(void)ac;
 
 	do
 	{
 		write(1, "$ ", 2);
-		if ((bytesrd = getline(&buff, &size, stdin)) != -1)
+		bytesrd = getline(&buff, &size, stdin);
+		if (bytesrd != -1)
 		{
-			if (strcmp(buff, "\n") == 0 || strcmp(buff, " \n") == 0)
+			argv = get_args(buff);
+			if (argv == NULL)
 				continue;
-			str = format_command(buff);
-			if (hasargs(str) > 1)
-				split_string(str, hasargs(str))x;
-			argv[0] = format_command(buff);
-			switch (childpid = fork())
-			{
-			case -1:
-				perror("unable to fork");
-				break;
-			case 0:
-				if (execve(argv[0], argv, environ) == -1)
-					err_msg(*av, argv[0]);
-				exit(0);
-				break;
-			default:
-				wait(NULL);
-			}
-			free(argv[0]);
-			argv[0] = NULL;
+			fork_exec(av, argv, env);
+			free_mem(NULL, argv);
+			argv = NULL;
 			free(buff);
 			buff = NULL;
 		}
