@@ -1,6 +1,7 @@
 #include "main.h"
 /**
  *fork_exec - forks and executes given commands
+ *@av: arguments to main
  *@argv: array of args
  *@env: arraybof environment variables
  *@com: command to be passed

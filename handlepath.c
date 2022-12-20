@@ -21,11 +21,8 @@ char *handlepath(char *comstr)
 		strcat(com, comstr);
 		if (stat(com, &st) == 0)
 			return (com);
-		else
-		{
-			free(com);
-			return (NULL);
-		}
+		free(com);
+		return (NULL);
 	}
 	return (comstr);
 }

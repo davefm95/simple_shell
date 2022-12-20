@@ -8,6 +8,7 @@
 void err_msg(size_t count, char *progname, char *command)
 {
 	char *errmsg = ": ", *errmsg2 = ": ", *errmsg3 = ": not found\n", c;
+
 	c = count + '0';
 	write(1, progname, strlen(progname));
 	write(1, errmsg, strlen(errmsg));

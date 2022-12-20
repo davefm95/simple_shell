@@ -13,8 +13,7 @@ int main(int ac, char **av, char **env)
 	char *buff = NULL, **argv = NULL, *modarg = NULL;
 	(void)ac;
 
-	do
-	{
+	do {
 		write(1, "$ ", 2);
 		bytesrd = getline(&buff, &size, stdin);
 		if (bytesrd != -1)
@@ -40,7 +39,7 @@ int main(int ac, char **av, char **env)
 			free(buff);
 			buff = NULL;
 		}
-	}while (bytesrd != -1);
+	} while (bytesrd != -1);
 	if (bytesrd == -1)
 		free(buff);
 	return (0);
