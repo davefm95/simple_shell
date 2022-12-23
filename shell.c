@@ -8,7 +8,7 @@
  */
 int main(int ac, char **av, char **env)
 {
-	int mode = isatty(0);;
+	int mode = isatty(0);
 	ssize_t bytesrd;
 	size_t size = 0, count = 0;
 	char *buff = NULL, **argv = NULL, *modarg = NULL;
