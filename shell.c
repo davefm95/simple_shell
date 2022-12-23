@@ -8,13 +8,15 @@
  */
 int main(int ac, char **av, char **env)
 {
+	int mode = isatty(0);;
 	ssize_t bytesrd;
 	size_t size = 0, count = 0;
 	char *buff = NULL, **argv = NULL, *modarg = NULL;
 	(void)ac;
 
 	do {
-		write(1, "$ ", 2);
+		if (mode == 1)
+			write(1, "$ ", 2);
 		bytesrd = getline(&buff, &size, stdin);
 		if (bytesrd != -1)
 		{
